@@ -262,30 +262,37 @@
     <script>
         // Countdown Timer
         function updateCountdown() {
-            const endDate = new Date();
-            endDate.setDate(endDate.getDate() + 3); // 3 hari dari sekarang
-            
-            const now = new Date().getTime();
-            const distance = endDate - now;
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            document.getElementById('days').innerHTML = days.toString().padStart(2, '0');
-            document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
-            
-            if (distance < 0) {
-                clearInterval(countdownTimer);
-                document.getElementById('countdown').innerHTML = "GIVEAWAY TELAH BERAKHIR";
-            }
-        }
-        
-        const countdownTimer = setInterval(updateCountdown, 1000);
-        updateCountdown();
+    // Tanggal akhir (3 hari dari sekarang, termasuk jam 23:59:59)
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 3);
+    endDate.setHours(23, 59, 59, 999); // Set sampai akhir hari
+    
+    const now = new Date().getTime();
+    const distance = endDate - now;
+    
+    // Jika waktu sudah habis
+    if (distance < 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('countdown').innerHTML = "GIVEAWAY TELAH BERAKHIR";
+        return;
+    }
+    
+    // Hitung waktu
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    // Update DOM
+    document.getElementById('days').textContent = days.toString().padStart(2, '0');
+    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+}
+
+// Inisialisasi timer
+const countdownTimer = setInterval(updateCountdown, 1000);
+updateCountdown(); // Panggil sekali di awal untuk hindari delay awal
         
         // Form Submission
         document.getElementById('giveawayForm').addEventListener('submit', async function(e) {
@@ -375,10 +382,19 @@
         });
         
         // Update peserta acak
-        setInterval(() => {
-            const participants = Math.floor(Math.random() * 100) + 1200;
-            document.querySelector('.participants').textContent = `🎉 ${participants.toLocaleString()} peserta sudah mendaftar`;
-        }, 5000);
+        let currentParticipants = 1200; // Nilai awal
+
+setInterval(() => {
+    const randomIncrement = Math.floor(Math.random() * 5) + 1; // Random 1-5
+    currentParticipants += randomIncrement;
+    
+    document.querySelector('.participants').textContent = 
+        `🎉 ${currentParticipants.toLocaleString()} peserta sudah mendaftar`;
+}, 5000);
+
+// Inisialisasi awal
+document.querySelector('.participants').textContent = 
+    `🎉 ${currentParticipants.toLocaleString()} peserta sudah mendaftar`;
     </script>
 </body>
 </html>
